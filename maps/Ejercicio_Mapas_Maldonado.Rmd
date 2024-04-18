@@ -50,6 +50,12 @@ final
 
 # Ejercicio N°2
 
+```{r}
+peru <- countries[countries$COUNTRY == 'Peru', ]
+peru_rivers <- rivers[rivers$SYSTEM == 'Peru', ]
+peru_cities <- cities [cities$COUNTRY == 'Peru', ]
+```
+
 
 ```{r}
 baseLayer=ggplot(data=peru)  + geom_sf(fill='grey90') + theme_light()
