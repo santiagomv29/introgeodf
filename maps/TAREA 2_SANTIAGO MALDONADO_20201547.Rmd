@@ -1,0 +1,121 @@
+---
+title: "TAREA 2_SANTIAGO MALDONADO_20201547"
+author: "Santiago Maldonado Vizcarra"
+date: "2024-04-17"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+  html_document:
+    df_print: paged
+---
+
+# Ejercicio N°1: 
+
+
+Creamos el objeto 'MAPS' para facilitar el codeo: 
+
+
+```{r}
+MAPS = "C:/Users/LENOVO/OneDrive/Documentos/ASIE/introgeodf/maps/worldMap.gpkg"
+```
+
+
+Aquí se pasa a la revisión de las características de cada uno de los layers: 
+
+
+```{r}
+sf::st_layers(MAPS) # a link to github data
+```
+
+
+Pasamos a configurar los datos para la visualización gráfica: 
+
+
+```{r}
+library(sf)
+countries=read_sf(MAPS,layer="countryBorders")
+rivers=read_sf(MAPS,layer="riverLines")
+cities=read_sf(MAPS,layer="cityPoints")
+```
+
+```{r}
+library(ggplot2)
+```
+
+
+Visualización gráfica: 
+
+
+```{r}
+baseLayer=ggplot(data=countries)  + geom_sf(fill='ivory') + theme_light()
+final=baseLayer + geom_sf(data=rivers, color='blue') + geom_sf(data=cities, color='lightgreen') 
+final
+```
+
+
+# Ejercicio N°2
+
+
+Establecemos los objetos correspodientes a Perú:
+
+
+```{r}
+peru <- countries[countries$COUNTRY == 'Peru', ]
+peru_rivers <- rivers[rivers$SYSTEM == 'Peru', ]
+peru_cities <- cities [cities$COUNTRY == 'Peru', ]
+```
+
+
+Realizamos la intersección entre los objetos "rivers" y "peru": 
+
+
+```{r}
+peru_rivers_clipped <- st_intersection(rivers, peru)
+```
+
+
+Realizamos el plotting:
+
+
+```{r}
+baseLayer=ggplot(data=peru)  + geom_sf(fill='ivory') + theme_light()
+final=baseLayer + geom_sf(data=peru_rivers_clipped, color='blue') + geom_sf(data=peru_cities, color='red') 
+final
+```
+
+
+# Ejercicio N°3: 
+
+
+Descargamos los archivos correspondientes: 
+
+```{r}
+library(rio)
+data_peruair = "C:/Users/LENOVO/OneDrive/Documentos/ASIE/introgeodf/data/pe-airports.xlsx"
+```
+
+
+```{r}
+peruair_pre = "C:/Users/LENOVO/OneDrive/Documentos/ASIE/introgeodf/maps/peruair_4326.shp"
+peruoair_final =st_read(peruair_pre)
+```
+
+
+Creamos la intersección entre nuestros objetos: 
+
+
+```{r}
+peruair_f2 <- st_intersection(peruoair_final, peru)
+```
+
+
+Realizamos el plotting: 
+
+
+```{r}
+baseLayer=ggplot(data=peru)  + geom_sf(fill='ivory') + theme_light()
+final=baseLayer + geom_sf(data=peru_rivers_clipped, color='blue') + geom_sf(data=peruair_f2, color='black') + geom_sf(data=peru_cities, color='red') + 
+  coord_sf(datum = st_crs(peru))
+final
+```
